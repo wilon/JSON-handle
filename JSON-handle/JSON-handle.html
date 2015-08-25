@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="zh-cn" />
+		<title> JSON-handle </title>
+		<meta name="author" content="" />
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<link href="css/jsonH.css" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" src="js/jh.js"></script>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/JSON.js"></script>
+		<script type="text/javascript" src="js/treeNav.js"></script>
+		<script type="text/javascript" src="js/listenResizeWin.js"></script>
+		<script type="text/javascript" src="js/jsonH/nav.js"></script>
+		<script type="text/javascript" src="js/jsonH.js"></script>
+		<script type="text/javascript" src="js/setting.js"></script>
+		<script type="text/javascript" src="js/jsonlint.js"></script>
+	</head>
+
+	<body>
+		<!-- {"eg": [3,4,5]} -->
+		<div id="jsonData" style="display:none;"></div>
+
+		<div id="pathTips"></div>
+
+		<div id="panel" class="min disTransition"><span id="minBtn">◥</span><div id="valueAct">
+			<div class="topBox">
+			<span class="inputTitle langID_title_1">Path: </span><input type="text" id="showPath" readonly="true" class="textInpub" /><br />
+			<span class="lableInput"><span class="inputTitle langID_title_2">Key: </span><input type="text" id="showKey" class="textInpub" /><span> :</span></span> <br />
+			</div>
+			<textarea id="showValue" rows="22" cols="66"></textarea><br />
+			<div class="bottomBox">
+			<a href="#" target="_blank" id="showLink" class="langID_title_3">Link</a>
+			<button id="saveBtn" type="button" class="langID_button_1">修改</button>
+			<button id="copyBtn" type="button" class="langID_button_9">复制</button>
+			<button id="undoBtn" type="button" class="langID_button_5" style="visibility:hidden;">&#8678;撤销</button>
+			<button id="redoBtn" type="button" class="langID_button_6" style="visibility:hidden;">前进&#8680;</button>
+			<div id="msgBox"></div>
+
+			<button id="gotoCur" type="button" class="langID_button_7">gotoCur</button>
+			<button id="expandAll" type="button" class="langID_button_4">expandAll</button>
+			<button id="collapseAll" type="button" class="langID_button_2">collapseAll</button>
+			<button id="expandCur" type="button" class="langID_button_3">expandCur</button>
+			<br /><br />
+			<input type="checkbox" id="showValueInNav" checked="checked" /><label for="showValueInNav" class="langID_label_1">显示值</label>
+			<input type="checkbox" id="showIco" /><label for="showIco" class="langID_label_2">图标</label>
+			<span id="showIcoAsFolder"><input type="checkbox" id="icoAsFolder" /><label for="icoAsFolder" class="langID_label_3">文件夹风格</label></span>
+			<div class="tools2"><button style="display:none;" disabled="true" id="saveFile" type="button" class="langID_button_8">saveFile</button></div>
+			</div>
+		</div></div>
+		<div id="jsonNav" class="treeNav"></div>
+		<div id="mask" style="display:none;">
+			<div id="enterInputDialog">
+				<div id="enterInputTips"><label for="enterValue">Input JSON String... </label></div>
+				<form id="enterForm" method="get" action="">
+
+					<textarea id="enterValue" name="enterValue"></textarea><br />
+					<button id="enterOk" type="submit">OK</button>
+
+				</form>
+			</div>
+		</div>
+		<span id="sigh" style="display:none;">!</span>
+		<div id="errorTips" style="display:none;"><div id="errorBtn"><span id="closeError">☓</span></div><div id="tipsBox"></div><div id="errorCode"></div></div>
+		<script type="text/javascript" src="js/pageInit.js"></script>
+
+	</body>
+</html>
