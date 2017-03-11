@@ -1,9 +1,14 @@
 # JSON-handle
-Chrome plugin to parse JSON. [To Install](https://chrome.google.com/webstore/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj)
+Chrome plugin to parse JSON.
+
+## Install
+To Install [on Chrome](https://chrome.google.com/webstore/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj), [on Firefox](https://addons.mozilla.org/en-US/firefox/addon/JSON-handle/).
+
+## Home Page
 
 JSON-Handle Home Page：  [jsonhandle.sinaapp.com](http://jsonhandle.sinaapp.com/)
 
-Have Question：[new issues](https://github.com/wilon/JSON-handle/issues/new)
+Question of this repository:  [new issues](https://github.com/wilon/JSON-handle/issues/new)
 
 ------
 ### 说明
