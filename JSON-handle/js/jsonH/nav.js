@@ -147,7 +147,10 @@ JH.mod.add(['treeNav'], 'jsonH.nav', function (modName, JH, $$) {
 				}else{
 					sTxt = _pub.JSON.stringify(eBlock.oData, null, 4);
 				}
-				$('#showValue').val(sTxt);
+				$('#showValue')
+					.val(sTxt)
+					.prop('oData', eBlock.oData)
+				;
 				$('#showKey').val(eBlock.sKeyName);
 				$('#showKey').attr('oldValue', eBlock.sKeyName);
 				var parentElm = $(eBlock).parents('.elmBlock');//debugger;
@@ -162,20 +165,17 @@ JH.mod.add(['treeNav'], 'jsonH.nav', function (modName, JH, $$) {
 
 			},
 			"overElmCallback" : function (eBlock) {
-				$('#pathTips').html(_pri.parsePathByElm(eBlock)+'');
-
-				
+				$('#pathTips').html($(eBlock).attr('nodePath'));
 			},
 			"outElmCallback" : function (eBlock) {
 				$('#pathTips').html('');
 
 				
 			},
+			"changeFlodCallback" : function () {_pub.changeFlodCallback && _pub.changeFlodCallback()},
 			"drawElmCallback" : function (eBlock) {
-
-				if($(eBlock).hasClass('node')) {
-					$('.elmSpan', eBlock).append('<span class="value">' + _pri.encodeToXMLchar(_pub.JSON.stringify(eBlock.oData)) + '</span>');
-				}
+				_parent._pro.drawElmCallback(eBlock);
+				$(eBlock).attr('nodePath', _pri.parsePathByElm(eBlock));
 			}
 			
 

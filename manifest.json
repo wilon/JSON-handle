@@ -9,22 +9,23 @@
    "content_scripts": [ {
       "all_frames": false,
       "js": [ "content_scripts.js" ],
-      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file:///*" ],
+      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file://*", "file:///*" ],
       "run_at": "document_end"
    } ],
+   "default_locale": "en",
    "description": "It's a browser and editor for JSON document.You can get a beautiful view",
    "icons": {
       "128": "logo128.png",
       "16": "logo16.png",
       "48": "logo48.png"
    },
-   "key": "ATYUIugUgiHoioiOIoiiK/kigIgiUGuytyWERTYoipkjNVCXzFG/TYuYUTRdgJVCSWQWESDFCVB",
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTA0oqw/Y1Aey+BoB6FW35vy2BHNT27eK+S8PZuHas82TxIAi3i3UDYj3bUqpScevWIwgrRBk5v/9jHypmxz4BEFtJFEcpEabl/3fVQmpT1M4owmQP8RMeMFJKa3GBB9gFf9r+DOKc4VwScZ1/dYXvBn3Nk08tiQgW94l+wSr/wwIDAQAB",
    "manifest_version": 2,
    "name": "JSON-handle",
    "offline_enabled": true,
    "options_page": "options.html",
-   "permissions": [ "tabs", "http://*/", "https://*/", "ftp://*/" ],
+   "permissions": [ "webRequest", "tabs", "\u003Call_urls>" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.0.2.2",
+   "version": "0.4.19",
    "web_accessible_resources": [ "JSON-handle/JSON-handle.html" ]
 }

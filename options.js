@@ -1,5 +1,4 @@
-
-JH.mod.add('browser_action', function (modName, JH) {
+JH.mod.add(['lang', 'ad'], 'browser_action', function (modName, JH, $$) {
 	//+++ 实现接口定义区 +++++++++++++
 		var _interface = [];
 	//-------------------------------------------
@@ -23,9 +22,25 @@ JH.mod.add('browser_action', function (modName, JH) {
 		_main = function () {
 			_pub = JH.mod.init(_pub_static, _this, _pro, _pub, _pro_static, _interface).pub;
 
-			_pri.loadSetting();
+			//$(function () {
+				
+				_pri.getIni(function (oResp) {
+					var oIni = oResp.data;
+					_pri.createAdList(oIni);
+					_pri.loadSetting(oIni);
 
+					if(location.hash === '#ad') {
+						_pri.hideAd();
+						setTimeout(function() {
+							_pri.showAd();
+						},1000);
+					}
+				});
+
+			//});
 			
+
+
 
 		};
 		//-------------------------------------------
@@ -47,6 +62,13 @@ JH.mod.add('browser_action', function (modName, JH) {
 				open : JH.e('#open'),
 				ok : JH.e('#ok'),
 				defaultShowPanel : JH.e('#defaultShowPanel'),
+				aboutAdBtn : JH.e('#aboutAdBtn'),
+				closeAdBtn : JH.e('#closeAdBtn'),
+				showLengthMode : $('input[name=showLengthMode]'),
+				showImgMode : $('input[name=showImgMode]'),
+				openJhMode : $('input[name=openJhMode]'),
+				renderMode : $('input[name=renderMode]'),
+				saveKeyStatus : JH.e('#saveKeyStatus'),
 				lang : JH.e('#lang')
 			};
 			
@@ -58,9 +80,16 @@ JH.mod.add('browser_action', function (modName, JH) {
 		_uiEvt = function () {
 			JH.addEvent(_pri.node['able'], 'click', _pri.uiEvtCallback.clickAble);
 			JH.addEvent(_pri.node['defaultShowPanel'], 'click', _pri.uiEvtCallback.clickDefaultShowPanel);
+			JH.addEvent(_pri.node['saveKeyStatus'], 'click', _pri.uiEvtCallback.clickSaveKeyStatus);
 			JH.addEvent(_pri.node['lang'], 'change', _pri.uiEvtCallback.changeLang);
 			//JH.addEvent(_pri.node['open'], 'click', _pri.uiEvtCallback.clickOpen);
 			JH.addEvent(_pri.node['ok'], 'click', _pri.uiEvtCallback.clickOk);
+			JH.addEvent(_pri.node['closeAdBtn'], 'click', _pri.uiEvtCallback.clickCloseAdBtn);
+			JH.addEvent(_pri.node['aboutAdBtn'], 'click', _pri.uiEvtCallback.clickAboutAdBtn);
+			$(_pri.node['showImgMode']).on('click', _pri.uiEvtCallback.clickShowImgMode);
+			$(_pri.node['showLengthMode']).on('click', _pri.uiEvtCallback.clickShowLengthMode);
+			$(_pri.node['openJhMode']).on('click', _pri.uiEvtCallback.clickOpenJhMode);
+			$(_pri.node['renderMode']).on('click', _pri.uiEvtCallback.clickRenderMode);
 		};
 		//-------------------------------------------
 
@@ -79,33 +108,119 @@ JH.mod.add('browser_action', function (modName, JH) {
 		//-------------------------------------------
 
 
+		_pri["request"] = JH.request(_pub);
+
 		JH.mergePropertyFrom(_pri, {
 		//+++ 私有属性和方法定义区 +++++++++++++
-			loadSetting : function () {
-				_pri.node['able'].checked = _pri.getSetting('able');
-				_pri.node['defaultShowPanel'].checked = _pri.getSetting('holdPanel');
-				_pri.setLang(_pri.getSetting('lang'));
+			hideAd : function () {
+				$('.ad-help').addClass('hide');
+					_pri.saveSetting('hideAdList', true);
+			},
+			showAd : function () {
+				$('.ad-help').removeClass('hide');
+					_pri.saveSetting('hideAdList', false);
+			},
+			createAdList : function (oIni) {
+				//$$.ad(oIni).getAdList(function (aList) {
+					//var sHtml = aList.map(function (o) {
+						//return o.showInOpt ? [
+							//'<li>',
+								//'<h4>',
+									//'<a class="title langID_data" target="_blank" href="'+_pri.encodeToXMLchar(o.url)+'" data-lang="'+_pri.createLangJsonStr(o.lang, 'title')+'">'+_pri.encodeToXMLchar(o.title)+'</a>',
+									//'<span>( <a href="'+_pri.encodeToXMLchar(o.url)+'" target="_blank">'+_pri.encodeToXMLchar(o.site)+'</a> )</span>',
+								//'</h4>',
+								//'<p class="langID_data" data-lang="'+_pri.createLangJsonStr(o.lang, 'desc')+'">'+_pri.encodeToXMLchar(o.desc)+'</p>',
+								//'<a class="title" target="_blank" href="'+_pri.encodeToXMLchar(o.url)+'"><img src="'+o.pic+'" alt="" /></a>',
+							//'</li>'
+						//].join('\n') : '';
+					//}).join('');
+					//$('.ad-list ul').html(sHtml);
+				//});
+			},
+			createLangData : function (oLang, sName) {
+				var o = {};
+				JH.forIn(oLang, function (v, k) {
+					o[k] = v[sName];
+				});
+				return o;
+			},
+			createLangJsonStr : function (oLang, sName) {
+				var o = _pri.createLangData(oLang, sName);
+				return _pri.encodeToXMLchar(JSON.stringify(o));
+			},
+			"encodeToXMLchar" : function (sValue) {
+				return sValue.replace(/\&/g,'&amp;').replace(/\</g,'&lt;').replace(/\>/g,'&gt;').replace(/\"/g,'&quot;');
+			},
+			"setIni" : _pri.request.create(JH.request.NS.opt, 'setIni'),
+			"getIni" : function (cb) {
+				_pri.request.create(JH.request.NS.opt, 'getIni', {
+					succeed : function (oIni) {
+						cb(oIni);
+					}
+				}).send();
+			},
+			loadSetting : function (oIni) {
+				_pri.node['able'].checked = oIni.able;
+				_pri.node['defaultShowPanel'].checked = oIni.holdPanel;
+				_pri.node['saveKeyStatus'].checked = oIni.saveKeyStatus;
+				$('input[name=showImgMode][value='+oIni.showImgMode+']').prop('checked', true);
+				$('input[name=openJhMode][value='+oIni.openJhMode+']').prop('checked', true);
+				$('input[name=showLengthMode][value='+oIni.showLengthMode+']').prop('checked', true);
+				$('input[name=renderMode][value='+oIni.renderMode+']').prop('checked', true);
+				if(!oIni.hideAdList) {
+					_pri.showAd();
+				}else{
+					_pri.hideAd();
+				}
+				_pri.setLang(oIni.lang);
+				$('body').css('visibility', 'visible');
 			},
 			setLang : function (sLang) {
 				_pri.node['lang'].value = sLang;
-			},
-			getSetting : function (sKey) {
-				return JSON.parse(localStorage['jhIni'])[sKey];
+				_pri.oLang = $$.lang(sLang);
+				_pri.oLang.setPage();
 			},
 			saveSetting : function (sKey, sValue) {
-				var oIni = JSON.parse(localStorage['jhIni']);
-				oIni[sKey] = sValue;
-				localStorage['jhIni'] = JSON.stringify(oIni);
+				var o = {};
+				o[sKey] = sValue;
+				_pri.setIni.send(o);
 			},
 			uiEvtCallback : {
+				clickOpenJhMode : function () {
+					_pri.saveSetting(this.name, this.value);
+				},
+				clickRenderMode : function () {
+					_pri.saveSetting(this.name, this.value);
+				},
+				clickShowImgMode : function () {
+					_pri.saveSetting(this.name, this.value);
+				},
+				clickCloseAdBtn : function () {
+					_pri.hideAd();
+				},
+				clickAboutAdBtn : function () {
+					if($('.ad-help').hasClass('hide')) {
+						_pri.showAd();
+					}else{
+						_pri.hideAd();
+					}
+				},
 				clickAble : function () {
 					_pri.saveSetting('able', this.checked);
 				},
 				clickDefaultShowPanel : function () {
 					_pri.saveSetting('holdPanel', this.checked);
 				},
+				clickShowLengthMode : function () {
+					_pri.saveSetting(this.name, this.value);
+				},
+				clickSaveKeyStatus : function () {
+					_pri.saveSetting('saveKeyStatus', this.checked);
+				},
 				changeLang : function () {
-					_pri.saveSetting('lang', this.value);
+					var sLang = this.value;
+					_pri.saveSetting('lang', sLang);
+					_pri.oLang.switchLang(sLang).setPage();
 				},
 				clickOk : function () {
 					//alert(localStorage['able'] + ' | ' + localStorage['lang']);

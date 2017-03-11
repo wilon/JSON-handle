@@ -7,7 +7,7 @@ if(!JH) {var JH;(function () {
 		if(!obj) {
 			return false;
 		}
-		if(!fnF || fnF.constructor !== Function) {
+		if(!fnF || ({}).toString.call(fnF) !== "[object Function]") {
 			err = new Error('第二参数不为函数。');
 			err.message += err.stack;
 			throw err;
@@ -108,7 +108,7 @@ if(!JH) {var JH;(function () {
 			*/
 		"forEach" : function (aE, fnF, thisArg) {
 			var i, l, bRF, err;
-			if(!fnF || fnF.constructor !== Function) {
+			if(!fnF || ({}).toString.call(fnF) !== "[object Function]") {
 				err = new Error('第二参数必须是函数。');
 				err.message += err.stack;
 				throw err;
@@ -200,7 +200,7 @@ if(!JH) {var JH;(function () {
 			* @return {Function} 注册到事件监听的函数引用
 			* 
 			* @param obj {htmlElement} 注册事件的元素
-			* @param type {String} 事件名称  注意：没有“on”前缀  正确写法为 ‘click’，‘mouseout’
+			* @param type {String} 事件名称  注意：没有“on”前缀  正确写法为 ‘click’，‘mouse out’
 			* @param fn {Function} 事件要响应的函数
 			* 
 			* @example 

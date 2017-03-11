@@ -1,17 +1,16 @@
 
 
-.treeNav {text-shadow: -2px 1px 3px rgba(70, 70, 70, 0.2);}
 .treeNav .ico {float:left;cursor:pointer;padding:0 0 0 2px;}
-.treeNav .row {padding:0 0 0 16px;height:22px;line-height:24px;background-color@:#fff;overflow@:hidden;}
+.treeNav .row {padding:0 0 0 16px;line-height:24px;background-color@:#fff;overflow@:hidden;}
 
-.treeNav .elmSpan {white-space: nowrap;margin:0 0 0 3px;display:inline-block;border-radius:8px;}
-.treeNav .cur>.row .elmSpan {box-shadow: -3px 3px 5px rgba(50, 50, 50, 0.4);font-weight:bold;background-color:#577cff;}
+.treeNav .elmSpan {white-space: nowrap;margin:0 0 0 1px;display:inline-block;border-radius:8px;}
+.treeNav .cur>.row .elmSpan {box-shadow: -1px 2px 3px rgba(50, 50, 50, 0.2);font-weight:bold;background-color:#577cff;}
 .treeNav .cur>.row .elmSpan * {color:#fff !important;}
 
-.treeNav .elmBlock {cursor:row-resize;}
+.treeNav .elmBlock {cursor:row-resize;background:url(treePic/line.png) repeat-y 0 0;}
 
-.treeNav .elmBox {cursor:pointer;border-radius:8px;padding-left:2px;}
-.treeNav .row:hover .elmBox{font-weight:bold;border-left:2px solid #778cff;}
+.treeNav .elmBox {cursor:pointer;border-radius:8px;padding-left:0;border-left:2px solid #fafaff;}
+.treeNav .row:hover .elmBox{font-weight:bold;border-color:#778cff;}
 .treeNav .elm {padding:3px 8px;white-space:nowrap;}
 
 .treeNav .elmList {padding:0 0 0 22px;}
@@ -37,4 +36,5 @@
 .treeNav .last.node>.row {background-image:url(treePic/nodeLast.png);}
 
 .treeNav .node .row {margin:0;white-space:nowrap;background:url(treePic/node.png) no-repeat 0 0;cursor:default;}
+
 

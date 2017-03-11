@@ -14,8 +14,8 @@ JH.mod.add([], 'listenResizeWin', function (modName, JH, $$) {
 	_pri_static["callbackList"] = [];
 
 	_pub_static["checkResize"] = function () {
-		var iWinWidth = $(window).width();
-		var iWinHeight = $(window).height();
+		var iWinWidth = document.documentElement.clientWidth;
+		var iWinHeight = document.documentElement.clientHeight;
 		var oWH = {
 			width:iWinWidth,
 			height:iWinHeight,

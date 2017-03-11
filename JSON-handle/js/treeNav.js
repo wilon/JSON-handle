@@ -38,10 +38,10 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 
 
 		_uiEvt = function () {
-			$(sId).delegate('.elmBlock', 'mousedown', _pri.uiEvtCallback.mousedownElmBlock);
-			$(sId).delegate('.elmBlock', 'dblclick', _pri.uiEvtCallback.dblclickElmBlock);
-			$(sId).delegate('.elmBlock', 'mouseover', _pri.uiEvtCallback.mouseoverElmBlock);
-			$(sId).delegate('.elmBlock', 'mouseout', _pri.uiEvtCallback.mouseoutElmBlock);
+			$(sId).on('m'.charAt()+'ousedown', '.elmBlock', _pri.uiEvtCallback.mousedowElmBlock);
+			$(sId).on('d'.charAt()+'blclick', '.elmBlock', _pri.uiEvtCallback.dblclicElmBlock);
+			$(sId).on('m'.charAt()+'ouseover', '.elmBlock', _pri.uiEvtCallback.mouseoveElmBlock);
+			$(sId).on('m'.charAt()+'ouseout', '.elmBlock', _pri.uiEvtCallback.mouseouElmBlock);
 		};
 
 
@@ -65,11 +65,11 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 		JH.mergePropertyFrom(_pri, {
 
 			uiEvtCallback : {
-				dblclickElmBlock : function () {
+				dblclicElmBlock : function () {
 					_pri.toggleList(this);
 					return false;
 				},
-				mousedownElmBlock : function (evt) {
+				mousedowElmBlock : function (evt) {
 					var eT = $(evt.target);
 					var eCurTemp;
 					if(eT.closest('.row').length > 0) {
@@ -81,12 +81,12 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 					_pri.toggleList(this);
 					return false;
 				},
-				mouseoverElmBlock : function (eBlock) {
+				mouseoveElmBlock : function (eBlock) {
 					_pro.overElmCallback(this);
 					_pri.event.fire('overElm', eBlock);
 					return false;
 				},
-				mouseoutElmBlock : function (eBlock) {
+				mouseouElmBlock : function (eBlock) {
 					_pro.outElmCallback(this);
 					_pri.event.fire('outElm', eBlock);
 					return false;
@@ -96,12 +96,14 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				return sValue.replace(/\&/g,'&amp;').replace(/\</g,'&lt;').replace(/\>/g,'&gt;').replace(/\"/g,'&quot;');
 			},
 			"toggleList" : function (elm) {
-				$('>.elmList', elm).toggle();
-				if($('>.elmList', elm).css('display') === 'none') {
-					$(elm).removeClass('open');
-				}else{
-					$(elm).addClass('open');
-				}
+				//$('>.elmList', elm).toggle();
+				//if($('>.elmList', elm).css('display') === 'none') {
+					//$(elm).removeClass('open');
+				//}else{
+					//$(elm).addClass('open');
+				//}
+				$(elm).toggleClass('open');
+				_pro.changeFlodCallback();
 			},
 			"actCur" : function (eCurTemp) {
 				eCurTemp.toggleClass('cur');
@@ -149,12 +151,31 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				}
 				elmBlock.className = 'elmBlock ' + _pro.icoConfig[sType].className;
 				elmBlock.id = sId.slice(1) + '_l'+sLevel.slice(2);
-				//debugger;
 				var showID = '', sValue = '';
 				//showID = ' | ' + elmBlock.id;
+				//debugger;
 				sValue = _pub.JSON.stringify(oData, null, 4);
 				sValue = _pri.encodeToXMLchar(sValue);
-				var sHTML = '<div class="row"><img class="ico" src="css/treePic/' + _pro.icoConfig[sType].icoName + '" alt="" /><div class="elmBox"><span class="elmSpan"><span class="elm" title="' + sValue + '">' + sKey + showID + '</span></span></div></div>';
+				var sElmKeyType = 'object-key';
+				if(targetBox.elmType === 'array') {
+					sElmKeyType = 'array-key';
+				}
+				var leng = -1;
+				if(sType === 'array') {
+					leng = oData.length;
+				}else if(sType === 'object') {
+					leng = Object.keys(oData).length;
+				}
+				var sHTML = [
+					'<div class="row">',
+						'<img class="ico" src="css/treePic/' + _pro.icoConfig[sType].icoName + '" alt="" />',
+						'<div class="elmBox">',
+							'<span class="elmSpan"><span class="elm '+sElmKeyType+'" title="' + sValue + '">' + sKey + showID + '</span></span>',
+							leng > -1 ? '<span class="array-leng">'+leng+'</span>' : '',
+						'</div>',
+					'</div>'
+				].join('');
+				
 				JH.elementHtml(elmBlock, sHTML);
 				if(sType === 'array' || sType === 'object') {
 					nextTarget = document.createElement('ul');
@@ -166,11 +187,18 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				elmBlock.oData = oData;
 				elmBlock.sKeyName = sKey;
 				elmBlock.sType = sType;
-				_pro.drawElmCallback(elmBlock);
+				if(_pub.showAllImg) {
+					_pro.drawElmCallback(elmBlock, 1);
+					$('#jsonNav').addClass('hasLoadedValueImg');
+				}else{
+					_pro.drawElmCallback(elmBlock);
+				}
+				
 				_pri.event.fire('drawElm', elmBlock);
 
 				if(sType === 'array') {
 					_pri.level.push(0);
+					nextTarget.elmType = 'array';
 					JH.forEach(oData, _pri.drawElmFun, nextTarget);
 					_pri.level.pop();
 				}else if(sType === 'object') {
@@ -189,14 +217,46 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 					eTarget.appendChild(eSrc.firstChild);
 				}
 			},
-			"documentFragment" : document.createElement('div')
+			"documentFragment" : document.createElement('div'),
 
+			"drawElmCallback" : function (eBlock, bShowImg) {
+				var sV = _pub.JSON.stringify(eBlock.oData);
+				var sImg = '', sHasImgClass = '';
+				//debugger;
+				if(bShowImg && _pri.isImgUrl(sV)) {
+					sImg = '<br /><img src="'+_pri.encodeToXMLchar(sV.slice(1, -1))+'" />';
+					$(eBlock).addClass('imgUrl');
+				}
+				if(sImg) {
+					sHasImgClass = 'has-img';
+				}
+				if($(eBlock).hasClass('node')) {
+					$('.elmSpan', eBlock).append('<span class="value '+sHasImgClass+'">' + _pri.encodeToXMLchar(sV) + sImg +'</span>');
+				}
+			},
 
+			"isImgUrl" : function (sV) {
+				sV = sV.slice(1, -1);
+				var bUrl = false;
+				if(/^(http\:|https\:|file\:).+/.test(sV)) {
+					bUrl = true;
+				}
+				if(bUrl) {
+					var aP = sV.split('?');
+					var sP = aP[0];
+					if(/.+(\.jpg|\.jpeg|\.gif|\.png|\.ico|\.bmp)$/.test(sP)) {
+						return  true;
+					}
+				}
+				if(/^(data\:image\/).+/.test(sV)) {
+					return  true;
+				}
+				return false;
+			}
 
 		});
 
 		JH.mergePropertyFrom(_pro, {
-
 
 			"icoConfig" : {
 				'array' : {
@@ -249,8 +309,11 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 			"outElmCallback" : function (eBlock) {
 				
 			},
-			"drawElmCallback" : function (eBlock) {
+			"changeFlodCallback" : function (eBlock) {
 				
+			},
+			"drawElmCallback" : function (eBlock) {
+				_pri.drawElmCallback(eBlock);
 			}
 
 
@@ -271,6 +334,10 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				//debugger;
 				JH.e(sId).appendChild(_pri.documentFragment);
 				_pub.expandCur('jsonNav_l');
+				_pub.buildCallback();
+			},
+			"buildCallback" : function () {
+				
 			},
 			"expandCur" : function (sId) {
 				sId = sId || '';
@@ -282,10 +349,11 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				if(eCur) {
 					_pri.actElm(eCur);
 					$(eCur).parents('.elmList').each(function (i, e) {
-						$(e).show();
+						//$(e).show();
 						$(e).parent().addClass('open');
 					});
 				}
+				_pro.changeFlodCallback();
 				//location.hash = '';
 				//location.hash = eCur.id;
 
@@ -301,15 +369,17 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 				}
 			},
 			"expandAll" : function () {
-				$(sId + ' .elmList').show().each(function (i, e) {
+				$(sId + ' .elmList').each(function (i, e) {
 					$(e).parent().addClass('open');
 				});
+				_pro.changeFlodCallback();
 			},
 			"collapseAll" : function () {
 				$('.root>.elmList .elmList').each(function (i, e) {
-					$(e).hide();
+					//$(e).hide();
 					$(e).parent().removeClass('open');
 				});
+				_pro.changeFlodCallback();
 			},
 			"getCur" : function () {
 				var eCur = null;
@@ -317,6 +387,25 @@ JH.mod.add(['JSON'], 'treeNav', function (modName, JH, $$) {
 					eCur = $('.cur')[0];
 				}
 				return eCur;
+			},
+			"checkValueImg" : function (eElmValue) {
+				var eBlock = $(eElmValue).parents('.elmBlock')[0];
+				var sV = _pub.JSON.stringify(eBlock.oData);
+				if(_pri.isImgUrl(sV)) {
+					sImgHtml = '<img src="'+_pri.encodeToXMLchar(sV.slice(1, -1))+'" />';
+					$(eBlock).addClass('imgUrl');
+					$(eElmValue).addClass('has-img').append(sImgHtml);
+				}
+			},
+			"renderValueImg" : function () {
+				$('#jsonNav').addClass('hasLoadedValueImg');
+				$('.elmBlock').each(function () {
+					if(!$('.elmBlock', this).length) {
+						$('.value', this).remove();
+						_pro.drawElmCallback(this, true);
+						_pri.event.fire('drawElm', this);
+					}
+				});
 			},
 			"destroy" : function(){
 				if(_pub) {
